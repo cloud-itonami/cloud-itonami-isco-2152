@@ -10,7 +10,7 @@ execution remains robotics-gated and out of the actor's scope.
 ElectronicsEngineersGovernor as a langgraph StateGraph
 (`intake → advise → govern → decide → commit/hold`, human-approval
 interrupt), modeled on cloud-itonami-isco-4311's bookkeeping actor.
-13 tests / 27 assertions green.
+23 tests / 58 assertions green.
 
 The BOM HARD invariants — arithmetic and set membership, not
 purchasing preference:
@@ -22,8 +22,20 @@ purchasing preference:
    (no invented or unapproved supplier) — supply-chain traceability is
    set membership.
 
-Also HARD: unregistered/foreign board, unregistered organization,
-non-`:propose` effect. Escalations (always human sign-off):
+Both of those hang off the operation's name, so the operation itself
+is the third membership test. `src/electronicseng/operations.cljc`
+is the catalog of operations this desk is authorized to perform, and
+`:op` is **deny-by-default**: an op absent from it is refused before
+any BOM is considered. Without that, a proposal that simply was not
+called `:approve-bom` skipped both invariants above — an LLM advisor
+names its own operation, and `{:op :order-parts :confidence 0.95}`
+carrying a 99999mW part from an unregistered vendor was accepted with
+an empty violation list. The catalog is load-bearing: the governor
+derives authorization, whether the BOM checks apply, and what
+escalates from it, so there is no second list to keep in sync.
+
+Also HARD: unauthorized `:op`, unregistered/foreign board,
+unregistered organization, non-`:propose` effect. Escalations (always human sign-off):
 `:approve-production` (release to manufacturing), low confidence
 (< 0.6).
 
