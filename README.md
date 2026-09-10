@@ -23,7 +23,7 @@ purchasing preference:
    set membership.
 
 Both of those hang off the operation's name, so the operation itself
-is the third membership test. `src/electronicseng/operations.cljc`
+is the third membership test. `src/electronicseng/operations.kotoba`
 is the catalog of operations this desk is authorized to perform, and
 `:op` is **deny-by-default**: an op absent from it is refused before
 any BOM is considered. Without that, a proposal that simply was not
