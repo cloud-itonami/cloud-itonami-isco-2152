@@ -1,0 +1,32 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:physics` runs it.
+;;
+;; README: an ISCO 2152 Electronics Engineers blueprint -- design/analysis is
+;; cognitive; physical execution is robotics-gated. The physical execution:
+;; a board passing through the reflow oven until its solder melts, and loading
+;; a PCB magazine into the line loader.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isco-2152"
+ :cases
+ [{:id :reflow-board-heating
+   :kind :thermal
+   :procedure "1.6 mm FR-4 board passes through a 250 C convection reflow zone; time until the far side reaches the SAC305 liquidus"
+   :params {:thickness-m 0.0016 :conductivity-w-mk 0.3 :density-kg-m3 1850.0 :specific-heat-j-kgk 1100.0
+            :t0-c 25.0 :t-hot-c 250.0 :t-back-ambient-c 250.0 :h-back-w-m2k 30.0
+            :threshold-c 217.0 :duration-s 600.0 :nodes 6}
+   :sweep {:param :h-front-w-m2k :values [20.0 40.0 60.0 80.0 100.0]}
+   :quantity :time-to-threshold-s
+   :limit {:max 90.0 :basis "estimate: 90 s to liquidus keeps components' total heat exposure within a typical reflow profile; 217 C is the SAC305 liquidus"}
+   :boundary {:lo 10.0 :hi 150.0}}
+  {:id :pcb-magazine-load
+   :kind :manipulator
+   :procedure "arm lifts a filled PCB magazine from the cart onto the line loader's elevator"
+   :params {:l1-m 0.45 :l2-m 0.40 :m1-kg 4.0 :m2-kg 3.0
+            :from [0.50 -0.05] :to [0.60 0.35] :duration-s 2.5 :steps 500}
+   :sweep {:param :payload-kg :values [2.0 4.0 6.0 8.0 10.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 60.0 :basis "estimate: continuous shoulder torque of a light collaborative arm (~5 kg class)"}
+   :boundary {:lo 0.5 :hi 30.0}}]}
