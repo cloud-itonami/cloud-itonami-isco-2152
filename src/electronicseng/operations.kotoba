@@ -2,7 +2,7 @@
   "The catalog of operations the ISCO-08 2152 community electronics
   engineers actor is AUTHORIZED to perform — the actor's authority
   boundary, and the SSoT the governor reads it from (itonami actor
-  pattern, ADR-2607011000 / CLAUDE.md Actors section).
+  pattern, ADR-2607011000 / AGENTS.md Actors section).
 
   Why this exists as its own component. The governor originally
   enumerated two things about an operation: which one carries a bill
